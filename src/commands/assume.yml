@@ -65,6 +65,13 @@ parameters:
       Role session name to be used.
       Default to $CIRCLE_USERNAME.
     type: env_var_name
+  external-id:
+    default: AWS_EXTERNAL_ID
+    description: |
+      External ID to be used with assume role.
+      Default to $AWS_EXTERNAL_ID.
+    type: env_var_name
+
   version:
     default: latest
     description: Select a specific version of the AWS v2 CLI. By default the latest version will be used.
@@ -81,6 +88,7 @@ steps:
         PARAM_AWS_CLI_REGION=$(eval echo "\$$PARAM_AWS_CLI_REGION")
         PARAM_AWS_CLI_STS_ROLE_ARN=$(eval echo "\$$PARAM_AWS_CLI_STS_ROLE_ARN")
         PARAM_AWS_CLI_STS_ROLE_SESSION_NAME=$(eval echo "\$$PARAM_AWS_CLI_STS_ROLE_SESSION_NAME")
+        PARAM_AWS_CLI_EXTERNAL_ID=$(eval echo "\$$PARAM_AWS_CLI_EXTERNAL_ID")
 
         aws configure set aws_access_key_id \
             "$PARAM_AWS_CLI_ACCESS_KEY_ID" \
@@ -105,7 +113,7 @@ steps:
         fi
 
         temp_role=$(aws sts assume-role --role-arn "$PARAM_AWS_CLI_STS_ROLE_ARN" \
-        --role-session-name "$PARAM_AWS_CLI_STS_ROLE_SESSION_NAME" --profile "$PARAM_AWS_CLI_PROFILE_NAME") && \
+        --role-session-name "$PARAM_AWS_CLI_STS_ROLE_SESSION_NAME" --external-id "$PARAM_AWS_CLI_EXTERNAL_ID" --profile "$PARAM_AWS_CLI_PROFILE_NAME") && \
 
         aws configure set aws_access_key_id $(echo $temp_role | jq \
         .Credentials.AccessKeyId | xargs) --profile "$PARAM_AWS_CLI_PROFILE_NAME" && \
@@ -125,4 +133,5 @@ steps:
         PARAM_AWS_CLI_SECRET_ACCESS_KEY: <<parameters.aws-secret-access-key>>
         PARAM_AWS_CLI_STS_ROLE_ARN: <<parameters.sts-role-arn>>
         PARAM_AWS_CLI_STS_ROLE_SESSION_NAME: <<parameters.sts-role-session-name>>
+        PARAM_AWS_CLI_EXTERNAL_ID: <<parameters.external-id>>
       name: Assume role
