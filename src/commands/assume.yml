@@ -104,16 +104,16 @@ steps:
                 --profile "$PARAM_AWS_CLI_PROFILE_NAME"
         fi
 
-        temp_role=$(aws sts assume-role --role-arn "$PARAM_AWS_CLI_STS_ROLE_ARN"
+        temp_role=$(aws sts assume-role --role-arn "$PARAM_AWS_CLI_STS_ROLE_ARN" \
         --role-session-name "$PARAM_AWS_CLI_STS_ROLE_SESSION_NAME" --profile "$PARAM_AWS_CLI_PROFILE_NAME") && \
 
-        aws configure set aws_access_key_id $(echo $temp_role | jq
+        aws configure set aws_access_key_id $(echo $temp_role | jq \
         .Credentials.AccessKeyId | xargs) --profile "$PARAM_AWS_CLI_PROFILE_NAME" && \
 
-        aws configure set aws_secret_access_key $(echo $temp_role | jq
+        aws configure set aws_secret_access_key $(echo $temp_role | jq \
         .Credentials.SecretAccessKey | xargs) --profile "$PARAM_AWS_CLI_PROFILE_NAME" && \
 
-        aws configure set aws_session_token $(echo $temp_role | jq
+        aws configure set aws_session_token $(echo $temp_role | jq \
         .Credentials.SessionToken | xargs) --profile "$PARAM_AWS_CLI_PROFILE_NAME"
       environment:
         PARAM_AWS_CLI_ACCESS_KEY_ID: <<parameters.aws-access-key-id>>
@@ -125,4 +125,4 @@ steps:
         PARAM_AWS_CLI_SECRET_ACCESS_KEY: <<parameters.aws-secret-access-key>>
         PARAM_AWS_CLI_STS_ROLE_ARN: <<parameters.sts-role-arn>>
         PARAM_AWS_CLI_STS_ROLE_SESSION_NAME: <<parameters.sts-role-session-name>>
-      name: Configure AWS Access Key ID
+      name: Assume role
