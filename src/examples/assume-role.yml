@@ -1,0 +1,21 @@
+description: Easily install, configure the AWS CLI and assume role automatically in your jobs or commands.
+usage:
+  version: "2.1"
+  orbs:
+    aws-cli: underw8/aws-assume-role@dev
+  jobs:
+    aws-cli-example:
+      executor: aws-cli/default
+      steps:
+        - checkout
+        - aws-cli/assume:
+            profile-name: default
+        - run:
+            name: Test the assumed role
+            command: |
+              aws s3 ls --profile default
+  workflows:
+    aws-cli:
+      jobs:
+        - aws-cli-example:
+            context: aws
