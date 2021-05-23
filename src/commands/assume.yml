@@ -105,7 +105,7 @@ steps:
         fi
 
         temp_role=$(aws sts assume-role --role-arn "$PARAM_AWS_CLI_STS_ROLE_ARN"
-        --role-session-name $PARAM_AWS_CLI_STS_ROLE_SESSION_NAME --profile "$PARAM_AWS_CLI_PROFILE_NAME") && \
+        --role-session-name "$PARAM_AWS_CLI_STS_ROLE_SESSION_NAME" --profile "$PARAM_AWS_CLI_PROFILE_NAME") && \
 
         aws configure set aws_access_key_id $(echo $temp_role | jq
         .Credentials.AccessKeyId | xargs) --profile "$PARAM_AWS_CLI_PROFILE_NAME" && \
