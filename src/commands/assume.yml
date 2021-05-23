@@ -111,8 +111,13 @@ steps:
                 --profile "$PARAM_AWS_CLI_PROFILE_NAME"
         fi
 
-        temp_role=$(aws sts assume-role --role-arn "$PARAM_AWS_CLI_STS_ROLE_ARN" \
-        --role-session-name "$PARAM_AWS_CLI_STS_ROLE_SESSION_NAME" --external-id "$PARAM_AWS_CLI_EXTERNAL_ID" --profile "$PARAM_AWS_CLI_PROFILE_NAME") && \
+        if [ -n "$PARAM_AWS_CLI_EXTERNAL_ID" ]; then
+          temp_role=$(aws sts assume-role --role-arn "$PARAM_AWS_CLI_STS_ROLE_ARN" \
+          --role-session-name "$PARAM_AWS_CLI_STS_ROLE_SESSION_NAME" --external-id "$PARAM_AWS_CLI_EXTERNAL_ID" --profile "$PARAM_AWS_CLI_PROFILE_NAME")
+        else
+          temp_role=$(aws sts assume-role --role-arn "$PARAM_AWS_CLI_STS_ROLE_ARN" \
+          --role-session-name "$PARAM_AWS_CLI_STS_ROLE_SESSION_NAME" --profile "$PARAM_AWS_CLI_PROFILE_NAME")
+        fi
 
         aws configure set aws_access_key_id $(echo $temp_role | jq \
         .Credentials.AccessKeyId | xargs) --profile "$PARAM_AWS_CLI_PROFILE_NAME" && \
@@ -133,4 +138,4 @@ steps:
         PARAM_AWS_CLI_STS_ROLE_ARN: <<parameters.sts-role-arn>>
         PARAM_AWS_CLI_STS_ROLE_SESSION_NAME: <<parameters.sts-role-session-name>>
         PARAM_AWS_CLI_EXTERNAL_ID: <<parameters.external-id>>
-      name: Assume role
+      name: Assume role and save credentials
