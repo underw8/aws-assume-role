@@ -71,7 +71,6 @@ parameters:
       External ID to be used with assume role.
       Default to $AWS_EXTERNAL_ID.
     type: env_var_name
-
   version:
     default: latest
     description: Select a specific version of the AWS v2 CLI. By default the latest version will be used.
